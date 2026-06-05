@@ -23,7 +23,7 @@
 
 > 🎬 **[Click here to watch the demo video](./demo/project_demo.mp4)**
 >
-> *(Add your screen recording of the app here — drag and drop the `.mp4` file into the `demo/` folder)*
+> Watch the full walkthrough of EduAdmit AI — from asking questions in the chat to checking eligibility and exploring fee structures.
 
 ---
 
@@ -164,13 +164,17 @@ college-admission-agent/
 │   └── script.js                # Chat, tabs, eligibility JS
 │
 ├── 📂 assets/
-│   └── langflow_pipeline.png    # LangFlow architecture screenshot
+│   ├── langflow_pipeline.png              # LangFlow architecture screenshot
+│   ├── Screenshot 2026-06-06 004439.png   # Chat interface screenshot
+│   ├── Screenshot 2026-06-06 004407.png   # Admission Deadlines screenshot
+│   ├── Screenshot 2026-06-06 004339.png   # Fee Structure screenshot
+│   └── Screenshot 2026-06-06 004256.png   # Eligibility Checker screenshot
 │
 ├── 📂 demo/
-│   └── project_demo.mp4         # 📽️ Add your demo video here
+│   └── project_demo.mp4                   # 📽️ Full app walkthrough video
 │
 └── 📂 langflow/
-    └── college_admission_flow.json   # Exportable LangFlow flow file
+    └── college_admission_flow.json        # Importable LangFlow pipeline file
 ```
 
 ---
@@ -235,17 +239,31 @@ Open your browser at **[http://localhost:5000](http://localhost:5000)** 🎉
 
 ## 📸 Screenshots
 
-### 💬 Chat Interface
-> AI-powered chat with IBM Granite responses from the RAG pipeline
+### 💬 Chat with AI
+> IBM Granite LLM answering student queries in real-time via the LangFlow RAG pipeline.
+
+![Chat Interface](./assets/Screenshot%202026-06-06%20004439.png)
+
+---
 
 ### 📅 Admission Deadlines
-> Visual deadline tracker with status badges (Open / Closing Soon / Closed)
+> Visual deadline tracker with color-coded status badges — Open, Closing Soon, and Closed.
+
+![Admission Deadlines](./assets/Screenshot%202026-06-06%20004407.png)
+
+---
 
 ### 💰 Fee Structure
-> Comprehensive fee table for all programs + scholarship highlights
+> Complete program-wise fee table for 2025–26 with scholarship highlights.
+
+![Fee Structure](./assets/Screenshot%202026-06-06%20004339.png)
+
+---
 
 ### ✅ Eligibility Checker
-> Interactive form with instant eligibility results for any program
+> Interactive academic profile form with instant eligibility result for any program.
+
+![Eligibility Checker](./assets/Screenshot%202026-06-06%20004256.png)
 
 ---
 
