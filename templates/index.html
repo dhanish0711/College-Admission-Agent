@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduAdmit AI | College Admission Agent</title>
+  <meta name="description" content="AI-powered college admission assistant using IBM Granite and RAG technology. Get instant answers about courses, fees, deadlines, and eligibility." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+
+  <div class="sidebar-logo">
+    <div class="logo-icon">🎓</div>
+    <div class="logo-title">EduAdmit AI</div>
+    <div class="logo-sub">IBM Granite · LangFlow RAG</div>
+  </div>
+
+  <div class="status-bar">
+    <span class="status-dot"></span>
+    <span>LangFlow Agent Online</span>
+  </div>
+
+  <div class="sidebar-section-label">⚡ Quick Questions</div>
+  <nav class="faq-nav" id="faqNav">
+    <button class="faq-btn" data-q="What courses are available for admission?">📚 What courses are available?</button>
+    <button class="faq-btn" data-q="What is the fee structure for B.Tech CSE?">💰 Fee for B.Tech CSE?</button>
+    <button class="faq-btn" data-q="What are the upcoming admission deadlines?">📅 Admission deadlines?</button>
+    <button class="faq-btn" data-q="What is the eligibility criteria for MBA?">✅ Eligibility for MBA?</button>
+    <button class="faq-btn" data-q="How do I apply for admission online?">📋 How do I apply online?</button>
+    <button class="faq-btn" data-q="What entrance exams are accepted for admission?">🎯 Entrance exams accepted?</button>
+    <button class="faq-btn" data-q="What scholarships are available for students?">🏆 Scholarship programs?</button>
+    <button class="faq-btn" data-q="What are the NRI admission seats and quota?">🌍 NRI admission seats?</button>
+    <button class="faq-btn" data-q="What documents are required for admission?">📄 Documents required?</button>
+    <button class="faq-btn" data-q="How to contact the admissions office?">📞 Contact admissions?</button>
+  </nav>
+
+  <div class="sidebar-section-label">📊 Session Stats</div>
+  <div class="stat-mini-grid">
+    <div class="stat-mini"><span class="stat-mini-val" id="queryCount">0</span><span class="stat-mini-label">Queries</span></div>
+    <div class="stat-mini"><span class="stat-mini-val" id="sessionStatus">Active</span><span class="stat-mini-label">Session</span></div>
+  </div>
+
+  <div class="sidebar-section-label">⚙️ Controls</div>
+  <button class="clear-btn" id="clearBtn">🗑️ Clear Chat History</button>
+
+  <div class="sidebar-footer">
+    <strong>EduAdmit AI</strong><br/>
+    Built with IBM Granite &amp; LangFlow<br/>
+    © 2025 Edunet Foundation
+  </div>
+</aside>
+
+<!-- ════════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════ -->
+<main class="main-content">
+
+  <!-- Mobile sidebar toggle -->
+  <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle sidebar">☰</button>
+
+  <!-- ── Hero Banner ── -->
+  <header class="hero-banner">
+    <div class="hero-left">
+      <h1 class="hero-title">🎓 College Admission AI Agent</h1>
+      <p class="hero-subtitle">Powered by RAG · Ask anything about admissions, courses, fees &amp; deadlines</p>
+      <div class="badge-row">
+        <span class="badge badge-blue">🤖 IBM Granite</span>
+        <span class="badge badge-gold">⚡ LangFlow RAG</span>
+        <span class="badge badge-teal">🔍 Real-time Retrieval</span>
+        <span class="badge badge-blue">🛡️ IBM Cloud</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-stats">
+        <div class="hero-stat"><span class="h-val">50+</span><span class="h-lbl">Courses</span></div>
+        <div class="hero-stat"><span class="h-val">₹85K</span><span class="h-lbl">Avg. Fee</span></div>
+        <div class="hero-stat"><span class="h-val">3</span><span class="h-lbl">Campuses</span></div>
+        <div class="hero-stat"><span class="h-val">98%</span><span class="h-lbl">Placement</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Tabs ── -->
+  <div class="tabs-wrapper">
+    <div class="tab-list" role="tablist">
+      <button class="tab-btn active" role="tab" data-tab="chat" id="tab-chat">💬 Chat with AI</button>
+      <button class="tab-btn" role="tab" data-tab="deadlines" id="tab-deadlines">📅 Deadlines</button>
+      <button class="tab-btn" role="tab" data-tab="fees" id="tab-fees">💰 Fee Structure</button>
+      <button class="tab-btn" role="tab" data-tab="eligibility" id="tab-eligibility">✅ Eligibility</button>
+    </div>
+
+    <!-- ══════════════════════════════
+         TAB: CHAT
+    ══════════════════════════════ -->
+    <div class="tab-panel active" id="panel-chat" role="tabpanel">
+
+      <!-- Chat Messages -->
+      <div class="chat-box" id="chatBox">
+        <!-- Empty state -->
+        <div class="chat-empty" id="chatEmpty">
+          <div class="chat-empty-icon">🤖</div>
+          <div class="chat-empty-title">Hello! I'm your College Admission Assistant</div>
+          <div class="chat-empty-sub">Ask me anything about admissions, courses, fees, deadlines,<br>or click a Quick Question in the sidebar to get started.</div>
+          <div class="chip-row">
+            <button class="chip" data-q="What is the fee for B.Tech CSE?">What is the fee for B.Tech CSE?</button>
+            <button class="chip" data-q="How do I apply for admission?">How do I apply for admission?</button>
+            <button class="chip" data-q="What entrance exams are accepted?">What entrance exams are accepted?</button>
+          </div>
+        </div>
+        <!-- Messages rendered by JS here -->
+      </div>
+
+      <!-- Input area -->
+      <div class="chat-input-area">
+        <div class="input-wrapper">
+          <input
+            type="text"
+            id="userInput"
+            class="chat-input"
+            placeholder="Ask about fees, courses, deadlines, eligibility..."
+            autocomplete="off"
+            aria-label="Chat message input"
+          />
+          <button class="send-btn" id="sendBtn" aria-label="Send message">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+        <p class="input-hint">Powered by IBM Granite via LangFlow · Press <kbd>Enter</kbd> to send</p>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         TAB: DEADLINES
+    ══════════════════════════════ -->
+    <div class="tab-panel" id="panel-deadlines" role="tabpanel">
+      <div class="panel-header">
+        <h2 class="panel-title">📅 Admission Deadlines 2025–26</h2>
+        <p class="panel-sub">Key dates for the upcoming academic year. Ask the AI for the most up-to-date information.</p>
+      </div>
+
+      <div class="deadlines-grid">
+        <div class="deadline-card open">
+          <div class="dl-status open">Open</div>
+          <div class="dl-name">B.Tech Application Opens</div>
+          <div class="dl-meta"><span>📆 01 Jan 2025</span><span>🏫 Undergraduate</span></div>
+        </div>
+        <div class="deadline-card closed">
+          <div class="dl-status closed">Closed</div>
+          <div class="dl-name">MBA Early Application</div>
+          <div class="dl-meta"><span>📆 15 Feb 2025</span><span>🏫 Postgraduate</span></div>
+        </div>
+        <div class="deadline-card closed">
+          <div class="dl-status closed">Closed</div>
+          <div class="dl-name">JEE Main / CUET Registration</div>
+          <div class="dl-meta"><span>📆 20 Feb 2025</span><span>🏫 Entrance Exam</span></div>
+        </div>
+        <div class="deadline-card open">
+          <div class="dl-status open">Open</div>
+          <div class="dl-name">B.Sc / B.Com Application Open</div>
+          <div class="dl-meta"><span>📆 01 Mar 2025</span><span>🏫 Undergraduate</span></div>
+        </div>
+        <div class="deadline-card soon">
+          <div class="dl-status soon">Closing Soon</div>
+          <div class="dl-name">Merit List — Round 1</div>
+          <div class="dl-meta"><span>📆 10 Jun 2025</span><span>🏫 B.Tech</span></div>
+        </div>
+        <div class="deadline-card soon">
+          <div class="dl-status soon">Closing Soon</div>
+          <div class="dl-name">Fee Payment — Round 1</div>
+          <div class="dl-meta"><span>📆 20 Jun 2025</span><span>🏫 All Programs</span></div>
+        </div>
+        <div class="deadline-card soon">
+          <div class="dl-status soon">Closing Soon</div>
+          <div class="dl-name">MBA Written Test</div>
+          <div class="dl-meta"><span>📆 25 Jun 2025</span><span>🏫 MBA</span></div>
+        </div>
+        <div class="deadline-card open">
+          <div class="dl-status open">Open</div>
+          <div class="dl-name">Document Verification</div>
+          <div class="dl-meta"><span>📆 01 Jul 2025</span><span>🏫 All Programs</span></div>
+        </div>
+        <div class="deadline-card open">
+          <div class="dl-status open">Open</div>
+          <div class="dl-name">Classes Commence</div>
+          <div class="dl-meta"><span>📆 15 Jul 2025</span><span>🏫 All Programs</span></div>
+        </div>
+        <div class="deadline-card open">
+          <div class="dl-status open">Open</div>
+          <div class="dl-name">Spot Round (Late Applications)</div>
+          <div class="dl-meta"><span>📆 30 Jul 2025</span><span>🏫 Limited Seats</span></div>
+        </div>
+      </div>
+
+      <div class="info-banner">
+        💬 <strong>Tip:</strong> Go to the <strong>Chat with AI</strong> tab and ask <em>"What are the upcoming deadlines?"</em> for real-time answers from our RAG system.
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         TAB: FEE STRUCTURE
+    ══════════════════════════════ -->
+    <div class="tab-panel" id="panel-fees" role="tabpanel">
+      <div class="panel-header">
+        <h2 class="panel-title">💰 Fee Structure 2025–26</h2>
+        <p class="panel-sub">Approximate annual fee structure (in INR). All fees subject to revision by the institution.</p>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="fee-table">
+          <thead>
+            <tr>
+              <th>Program</th>
+              <th>Duration</th>
+              <th>Tuition Fee</th>
+              <th>Other Fees</th>
+              <th>Total / Year</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>B.Tech — Computer Science &amp; Engineering</td><td>4 Years</td><td>₹1,20,000</td><td>₹25,000</td><td class="fee-highlight">₹1,45,000</td></tr>
+            <tr><td>B.Tech — Electronics &amp; Communication</td><td>4 Years</td><td>₹1,10,000</td><td>₹22,000</td><td class="fee-highlight">₹1,32,000</td></tr>
+            <tr><td>B.Tech — Mechanical Engineering</td><td>4 Years</td><td>₹95,000</td><td>₹20,000</td><td class="fee-highlight">₹1,15,000</td></tr>
+            <tr><td>B.Tech — Civil Engineering</td><td>4 Years</td><td>₹90,000</td><td>₹18,000</td><td class="fee-highlight">₹1,08,000</td></tr>
+            <tr><td>MBA — Business Administration</td><td>2 Years</td><td>₹1,50,000</td><td>₹30,000</td><td class="fee-highlight">₹1,80,000</td></tr>
+            <tr><td>MCA — Computer Applications</td><td>2 Years</td><td>₹85,000</td><td>₹18,000</td><td class="fee-highlight">₹1,03,000</td></tr>
+            <tr><td>B.Sc — Computer Science</td><td>3 Years</td><td>₹60,000</td><td>₹12,000</td><td class="fee-highlight">₹72,000</td></tr>
+            <tr><td>B.Com — Commerce</td><td>3 Years</td><td>₹45,000</td><td>₹10,000</td><td class="fee-highlight">₹55,000</td></tr>
+            <tr><td>BCA — Computer Applications</td><td>3 Years</td><td>₹70,000</td><td>₹14,000</td><td class="fee-highlight">₹84,000</td></tr>
+            <tr><td>M.Tech — CSE (AI &amp; ML)</td><td>2 Years</td><td>₹1,30,000</td><td>₹25,000</td><td class="fee-highlight">₹1,55,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="scholarship-card">
+        <h3 class="scholarship-title">🏆 Scholarship Highlights</h3>
+        <ul class="scholarship-list">
+          <li><span class="s-tag green">100% waiver</span> Merit Scholarship for top 5 JEE/CUET rankers</li>
+          <li><span class="s-tag green">Govt. Concession</span> SC / ST / OBC fee concession as per state norms</li>
+          <li><span class="s-tag green">25% off</span> Sports Quota for national-level athletes</li>
+          <li><span class="s-tag blue">10% off</span> Sibling Discount if a sibling is already enrolled</li>
+          <li><span class="s-tag gold">₹50,000</span> IBM Edunet Scholarship for AI/ML track students</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         TAB: ELIGIBILITY
+    ══════════════════════════════ -->
+    <div class="tab-panel" id="panel-eligibility" role="tabpanel">
+      <div class="panel-header">
+        <h2 class="panel-title">✅ Eligibility Checker</h2>
+        <p class="panel-sub">Fill in your academic details to instantly check program eligibility.</p>
+      </div>
+
+      <div class="eligibility-layout">
+        <!-- Form -->
+        <div class="elig-form-card">
+          <h3 class="form-section-title">📝 Your Academic Profile</h3>
+
+          <div class="form-group">
+            <label class="form-label" for="progSelect">Program of Interest</label>
+            <select class="form-select" id="progSelect">
+              <option value="B.Tech">B.Tech (Engineering)</option>
+              <option value="MBA">MBA</option>
+              <option value="MCA">MCA</option>
+              <option value="B.Sc CS">B.Sc Computer Science</option>
+              <option value="B.Com">B.Com</option>
+              <option value="BCA">BCA</option>
+              <option value="M.Tech">M.Tech</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="qualSelect">Highest Qualification</label>
+            <select class="form-select" id="qualSelect">
+              <option value="10+2 (PCM)">10+2 (PCM — Physics, Chemistry, Maths)</option>
+              <option value="10+2 (Commerce)">10+2 (Commerce)</option>
+              <option value="10+2 (Arts)">10+2 (Arts)</option>
+              <option value="10+2 (Biology)">10+2 (Biology)</option>
+              <option value="10+2 (Any Stream)">10+2 (Any Stream)</option>
+              <option value="B.Tech / BE">B.Tech / BE (Engineering Graduation)</option>
+              <option value="B.Sc / BCA">B.Sc / BCA (Science Graduation)</option>
+              <option value="B.Com / BBA">B.Com / BBA (Commerce Graduation)</option>
+              <option value="BA / Other Graduation">BA / Other Graduation</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Aggregate Percentage: <strong id="pctDisplay" class="pct-val">75%</strong></label>
+            <input type="range" class="form-range" id="pctRange" min="40" max="100" value="75" />
+            <div class="range-labels"><span>40%</span><span>70%</span><span>100%</span></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Entrance Exams Qualified</label>
+            <div class="checkbox-grid">
+              <label class="cb-label"><input type="checkbox" class="cb-input" value="JEE Main" /> JEE Main</label>
+              <label class="cb-label"><input type="checkbox" class="cb-input" value="JEE Advanced" /> JEE Advanced</label>
+              <label class="cb-label"><input type="checkbox" class="cb-input" value="CUET" /> CUET</label>
+              <label class="cb-label"><input type="checkbox" class="cb-input" value="CAT" /> CAT</label>
+              <label class="cb-label"><input type="checkbox" class="cb-input" value="MAT" /> MAT</label>
+              <label class="cb-label"><input type="checkbox" class="cb-input" value="NMAT" /> NMAT</label>
+              <label class="cb-label"><input type="checkbox" class="cb-input" value="XAT" /> XAT</label>
+              <label class="cb-label"><input type="checkbox" class="cb-input" value="GATE" /> GATE</label>
+            </div>
+          </div>
+
+          <button class="check-btn" id="checkEligBtn">🔍 Check Eligibility</button>
+        </div>
+
+        <!-- Result -->
+        <div class="elig-result-card" id="eligResult">
+          <div class="result-placeholder">
+            <div class="placeholder-icon">🎯</div>
+            <div class="placeholder-text">Fill in your details and click <strong>Check Eligibility</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Criteria Reference -->
+      <div class="criteria-table-wrapper">
+        <h3 class="criteria-title">📋 General Eligibility Criteria</h3>
+        <table class="criteria-table">
+          <thead>
+            <tr><th>Program</th><th>Qualification</th><th>Min %</th><th>Entrance Exam</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>B.Tech</td><td>10+2 (PCM)</td><td>60%</td><td>JEE Main / CUET</td></tr>
+            <tr><td>MBA</td><td>Graduation (Any)</td><td>50%</td><td>CAT / MAT / NMAT</td></tr>
+            <tr><td>MCA</td><td>Graduation (with Maths)</td><td>55%</td><td>Optional</td></tr>
+            <tr><td>M.Tech</td><td>B.Tech / BE</td><td>60%</td><td>GATE (Preferred)</td></tr>
+            <tr><td>B.Sc CS</td><td>10+2 (Any)</td><td>50%</td><td>None</td></tr>
+            <tr><td>BCA</td><td>10+2 (Maths)</td><td>50%</td><td>None</td></tr>
+            <tr><td>B.Com</td><td>10+2 (Commerce)</td><td>45%</td><td>None</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- end tabs-wrapper -->
+
+</main>
+
+<!-- Sidebar overlay for mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
