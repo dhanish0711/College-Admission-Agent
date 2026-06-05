@@ -1,0 +1,4 @@
+flask>=3.0.0
+requests>=2.31.0
+langflow>=3.0.0
+uv>=0.4.7
